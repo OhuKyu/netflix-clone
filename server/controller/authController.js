@@ -105,3 +105,26 @@ export async function logout(req, res) {
     }
 }
 
+export async function authCheck(req, res) {
+    try {
+        // Add caching headers
+        res.set('Cache-Control', 'private, max-age=300'); // Cache for 5 minutes
+        
+        if (!req.user) {
+            return res.status(401).json({ success: false });
+        }
+
+        // Only send necessary user data
+        const userData = {
+            _id: req.user._id,
+            username: req.user.username,
+            email: req.user.email,
+            image: req.user.image
+        };
+
+        res.status(200).json({ success: true, user: userData });
+    } catch (error) {
+        console.log("Lỗi trong Controller ấy vào mà xem! Bực", error.message);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
